@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import theme from "./theme";
 import type { Item } from "./Item";
 import ListItem from "./Item";
@@ -39,6 +39,17 @@ export default () => {
     setText(undefined);
   }
 
+  function deleteItem(item: Item) {
+    const index = items.indexOf(item);
+    if (index === -1) return;
+    items.splice(index, 1);
+    setItems([...items]);
+  }
+
+  useEffect(() => {
+    console.debug("items changed", items);
+  }, [items]);
+
   return (
     <SafeAreaView style={styles.page}>
       <TopAppBar />
@@ -47,7 +58,12 @@ export default () => {
         {/* <Text style={styles.title}>Shopping List</Text> */}
         <View style={styles.itemList}>
           {items.map((item, index) => (
-            <ListItem key={index} name={item.name} />
+            //TODO item key should be unique
+            <ListItem
+              key={item.name}
+              item={item}
+              onDelete={() => deleteItem(item)}
+            />
           ))}
         </View>
       </View>

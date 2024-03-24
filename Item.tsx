@@ -1,10 +1,10 @@
 import {
-  TouchableOpacity,
   Text,
   StyleSheet,
   View,
   Pressable,
   Animated,
+  Easing,
 } from "react-native";
 import theme from "./theme";
 import {
@@ -13,8 +13,15 @@ import {
   Delete,
   RemoveShoppingCart,
 } from "./icons";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Swipeable } from "react-native-gesture-handler";
+import {
+  default as Reanimated,
+  runOnJS,
+  useSharedValue,
+  withSpring,
+  withTiming,
+} from "react-native-reanimated";
 
 export type Item = {
   name: string;
@@ -71,22 +78,41 @@ const actionStyles = StyleSheet.create({
   },
 });
 
-function handleDeleteSwipe() {
-  console.debug("Delete swipe");
-}
+type ListItemProperties = {
+  item: Item;
+  onDelete: () => void;
+};
 
-function ListItem({ name }: Item) {
+function ListItem({ item, onDelete }: ListItemProperties) {
+  const height = useSharedValue(56);
+  function startDeleteAnimation(callback: () => void) {
+    height.value = withTiming(0, undefined, () => runOnJS(callback)());
+  }
+
+  function handleDeleteSwipe() {
+    startDeleteAnimation(onDelete);
+  }
+
   const [isTaken, setIsTaken] = useState<boolean>(false);
 
   // Based on https://youtu.be/JxN9W9PRlUQ
+  //TODO Fade out icon when shrinking height on delete
+  //TODO add haptic feedback when crossing the delete swipe threshold in the middle
   return (
     <Swipeable
       renderLeftActions={LeftDeleteAction}
       renderRightActions={RightDeleteAction}
       onSwipeableOpen={handleDeleteSwipe}
     >
-      <View style={styles.item}>
-        <Text style={styles.headline}>{name}</Text>
+      <Reanimated.View
+        style={[
+          styles.item,
+          {
+            height,
+          },
+        ]}
+      >
+        <Text style={styles.headline}>{item.name}</Text>
         <View style={styles.actions}>
           <Pressable onPress={() => setIsTaken(!isTaken)} style={styles.action}>
             {isTaken ? (
@@ -100,7 +126,7 @@ function ListItem({ name }: Item) {
             <CheckBoxOutlineBlank fill={theme.green[950]} />
           </Pressable>
         </View>
-      </View>
+      </Reanimated.View>
     </Swipeable>
   );
 }
@@ -112,8 +138,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingLeft: theme.spacing.screen.compact,
-    paddingVertical: 4,
-    height: 56,
     backgroundColor: theme.yellow[50],
   },
   headline: {
