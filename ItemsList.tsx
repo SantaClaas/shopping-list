@@ -10,6 +10,8 @@ import {
   Pressable,
   Keyboard,
   TouchableOpacity,
+  StatusBar as RnStatusBar,
+  FlatList,
 } from "react-native";
 
 import { useEffect, useState } from "react";
@@ -54,18 +56,14 @@ export default () => {
     <SafeAreaView style={styles.page}>
       <TopAppBar />
       <View>
-        <StatusBar style="auto" />
-        {/* <Text style={styles.title}>Shopping List</Text> */}
-        <View style={styles.itemList}>
-          {items.map((item, index) => (
-            //TODO item key should be unique
-            <ListItem
-              key={item.name}
-              item={item}
-              onDelete={() => deleteItem(item)}
-            />
-          ))}
-        </View>
+        <StatusBar style="auto" backgroundColor={theme.yellow[50]} />
+        <FlatList
+          data={items}
+          renderItem={({ item }) => (
+            <ListItem item={item} onDelete={() => deleteItem(item)} />
+          )}
+          keyExtractor={(item) => item.name}
+        />
       </View>
       <KeyboardAvoidingView
         style={styles.newItemArea}
@@ -89,6 +87,7 @@ const styles = StyleSheet.create({
   page: {
     flex: 1,
     backgroundColor: theme.yellow[50],
+    marginTop: RnStatusBar.currentHeight || 0,
   },
   title: {
     // fontSize: theme.typescale.headline.large.fontSize,

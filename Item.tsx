@@ -139,6 +139,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingLeft: theme.spacing.screen.compact,
     backgroundColor: theme.yellow[50],
+    height: 56,
   },
   headline: {
     color: theme.green[950],
