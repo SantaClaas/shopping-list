@@ -7,60 +7,58 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   Keyboard,
   TouchableOpacity,
   StatusBar as RnStatusBar,
   FlatList,
 } from "react-native";
 
-import { useEffect, useState } from "react";
-import theme from "./theme";
-import type { Item } from "./Item";
-import ListItem from "./Item";
+import { useEffect, useRef, useState } from "react";
 import TopAppBar from "./TopAppBar";
-
-const testItems: Item[] = [
-  { name: "Apples" },
-  { name: "Bananas" },
-  { name: "Oranges" },
-];
+import theme from "../theme";
+import ListItem from "./ListItem";
+import { Item, useItems } from "../data";
+import * as Crypto from "expo-crypto";
 
 export default () => {
-  const [items, setItems] = useState<Item[]>(__DEV__ ? testItems : []);
+  console.debug("Render");
+  // Rerenders on type now but this might be useful later to show suggestions
   const [text, setText] = useState<string | undefined>(undefined);
+
+  //TODO handle error
+  const { query, insert, delete: deleter } = useItems();
+  const { data } = query;
+
+  console.debug(query.isError, query.data?.length, insert.error);
 
   function handleSubmit() {
     if (!text) return;
 
     Keyboard.dismiss();
-    const newItem = { name: text };
-    items.push(newItem);
-    setItems(items);
-    console.debug("items", items);
+    const newItem = {
+      id: Crypto.randomUUID(),
+      listId: "this should cause foreign key error",
+      name: text,
+      isChecked: false,
+      // This is UTC in seconds isn't it?
+      createdTimestampUtc: new Date(Date.now()),
+    };
+    insert.mutate(newItem);
     setText(undefined);
   }
-
-  function deleteItem(item: Item) {
-    const index = items.indexOf(item);
-    if (index === -1) return;
-    items.splice(index, 1);
-    setItems([...items]);
-  }
-
-  useEffect(() => {
-    console.debug("items changed", items);
-  }, [items]);
-
   return (
     <SafeAreaView style={styles.page}>
       <TopAppBar />
       <View>
         <StatusBar style="auto" backgroundColor={theme.yellow[50]} />
         <FlatList
-          data={items}
+          data={data}
           renderItem={({ item }) => (
-            <ListItem item={item} onDelete={() => deleteItem(item)} />
+            <ListItem
+              item={item}
+              onDelete={() => deleter.mutate(item)}
+              isGroupList={false}
+            />
           )}
           keyExtractor={(item) => item.name}
         />
