@@ -1,12 +1,16 @@
 import { Link } from "expo-router";
-import { View, Text } from "react-native";
+import { Pressable, Text, View } from "react-native";
+import ListItem1 from "../components/ListItem1";
+import { ArrowRight } from "../icons";
 
 export default function () {
   return (
     <View>
-      <Text>Helo</Text>
-      <Link href="/lists/1">List 1</Link>
-      <Link href="/lists/2">List 2</Link>
+      <Link href="/lists/1" asChild>
+        <Pressable android_ripple={{}}>
+          <ListItem1 trailingIcon={<ArrowRight />} />
+        </Pressable>
+      </Link>
     </View>
   );
 }

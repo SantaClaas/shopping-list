@@ -1,24 +1,23 @@
+import * as Crypto from "expo-crypto";
 import { StatusBar } from "expo-status-bar";
+import { useEffect, useRef, useState } from "react";
 import {
-  Text,
-  TextInput,
-  View,
-  StyleSheet,
-  SafeAreaView,
+  FlatList,
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
-  Keyboard,
-  TouchableOpacity,
   StatusBar as RnStatusBar,
-  FlatList,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from "react-native";
-
-import { useEffect, useRef, useState } from "react";
-import TopAppBar from "./TopAppBar";
+import { MINIMUM_TOUCH_TARGET_SIZE } from "..";
+import { Item, useItems } from "../data";
 import theme from "../theme";
 import ListItem from "./ListItem";
-import { Item, useItems } from "../data";
-import * as Crypto from "expo-crypto";
 
 export default () => {
   console.debug("Render");
@@ -46,9 +45,10 @@ export default () => {
     insert.mutate(newItem);
     setText(undefined);
   }
+
+  //TODO drag items to change order
   return (
     <SafeAreaView style={styles.page}>
-      <TopAppBar />
       <View>
         <StatusBar style="auto" backgroundColor={theme.yellow[50]} />
         <FlatList
@@ -112,14 +112,14 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: 5,
     borderColor: theme.green[800],
-    height: 48,
+    height: MINIMUM_TOUCH_TARGET_SIZE.height,
     flex: 1,
     padding: 10,
   },
   addButton: {
     backgroundColor: theme.green[700],
     borderRadius: 5,
-    height: 48,
+    height: MINIMUM_TOUCH_TARGET_SIZE.height,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,

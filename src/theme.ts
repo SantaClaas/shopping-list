@@ -1,4 +1,5 @@
 import { TextStyle } from "react-native";
+
 // /* display - large */
 // --md-sys-typescale-display-large-font-family-name: Roboto;
 // --md-sys-typescale-display-large-font-family-style: Regular;
@@ -205,6 +206,13 @@ export default {
         fontSize: 16,
         lineHeight: 24,
         letterSpacing: 0.5,
+      } satisfies TextStyle,
+      medium: {
+        // fontStyle: "regular",
+        fontWeight: "400",
+        fontSize: 14,
+        lineHeight: 20,
+        letterSpacing: 0.25,
       } satisfies TextStyle,
     },
     label: {

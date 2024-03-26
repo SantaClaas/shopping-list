@@ -2,6 +2,7 @@ import { StyleSheet, View, Animated, Easing } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import theme from "../theme";
 import { Delete } from "../icons";
+import { MINIMUM_TOUCH_TARGET_SIZE } from "..";
 
 type AnimatedInterpolation = ReturnType<Animated.Value["interpolate"]>;
 
@@ -72,8 +73,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
   },
   action: {
-    height: 48,
-    width: 48,
+    ...MINIMUM_TOUCH_TARGET_SIZE,
     justifyContent: "center",
     alignItems: "center",
   },
