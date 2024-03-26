@@ -31,5 +31,8 @@ export default (configuration) => ({
   },
   plugins: ["expo-router"],
   // The linking scheme
-  scheme: "shopping-list",
+  scheme: APP_NAME,
+  experiments: {
+    typedRoutes: true,
+  },
 });
