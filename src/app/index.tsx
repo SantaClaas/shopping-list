@@ -30,9 +30,7 @@ export default function () {
       <Link href="/lists/1" asChild>
         <Pressable
           android_ripple={{
-            //TODO use theme ripple colors (see List material documentation)
-            // color: "#0000001",
-            radius: 24 / 2 + 8,
+            color: theme.state.pressed.stateLayerOpacity,
           }}
         >
           <ListItem1

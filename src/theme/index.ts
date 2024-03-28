@@ -27,6 +27,27 @@ export default {
       extraLarge: 24,
     },
   },
+  state: {
+    hovered: {
+      /** As hex rgba of black with 8% opacity value since pressable only accepts a color value */
+      stateLayerOpacity: "#00000014",
+    },
+    focused: {
+      /** As hex rgba of black with 10% opacity value since pressable only accepts a color value */
+      stateLayerOpacity: "#0000001a",
+    },
+    pressed: {
+      /**
+       * The color of the ripple effect when the component is pressed
+       * As hex rgba of black with 10% opacity value since pressable only accepts a color value
+       */
+      stateLayerOpacity: "#0000001a",
+    },
+    dragged: {
+      /** As hex rgba of black with 16% opacity value since pressable only accepts a color value */
+      stateLayerOpacity: "#00000029",
+    },
+  },
   typescale: {
     dispay: {},
     headline: {
