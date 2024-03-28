@@ -12,10 +12,14 @@ import theme from "../theme";
 
 export type ListItem1Properties = {
   trailingIcon?: React.ReactNode;
-
-  onPress?: null | ((event: GestureResponderEvent) => void) | undefined;
+  headline: string;
+  supportingText: string;
 };
-export default function ({ trailingIcon, onPress }: ListItem1Properties) {
+export default function ({
+  trailingIcon,
+  headline,
+  supportingText,
+}: ListItem1Properties) {
   const paddingRight = trailingIcon ? 16 : 10; /* + 6 icon right padding */
   return (
     //TODO figure out why ripple does not work
@@ -23,8 +27,8 @@ export default function ({ trailingIcon, onPress }: ListItem1Properties) {
     // <Pressable style={styles.item} onPress={onPress} android_ripple={{}}>
     <View style={styles.item}>
       <View>
-        <Text style={styles.headline}>Item 1</Text>
-        <Text style={styles.supportingText}>Supporting text</Text>
+        <Text style={styles.headline}>{headline}</Text>
+        <Text style={styles.supportingText}>{supportingText}</Text>
       </View>
       <View style={styles.trailingIcons}>
         {trailingIcon && <Pressable>{trailingIcon}</Pressable>}

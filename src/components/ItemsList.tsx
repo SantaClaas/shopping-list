@@ -53,6 +53,7 @@ export default () => {
         <StatusBar style="auto" backgroundColor={theme.colors.light.surface} />
         <FlatList
           data={data}
+          keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <ListItem
               item={item}
@@ -60,7 +61,6 @@ export default () => {
               isGroupList={false}
             />
           )}
-          keyExtractor={(item) => item.name}
         />
       </View>
       <KeyboardAvoidingView
