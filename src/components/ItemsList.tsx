@@ -84,8 +84,6 @@ export default () => {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    backgroundColor: theme.colors.light.surface,
-    marginTop: RnStatusBar.currentHeight || 0,
   },
   title: {
     // fontSize: theme.typescale.headline.large.fontSize,

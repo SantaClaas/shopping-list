@@ -1,6 +1,6 @@
 import { getHeaderTitle } from "@react-navigation/elements";
 import { NativeStackHeaderProps } from "@react-navigation/native-stack";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StatusBar, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 import { MINIMUM_TOUCH_TARGET_SIZE } from "../..";
@@ -8,7 +8,7 @@ import { ArrowBack } from "../../icons";
 import theme from "../../theme";
 
 export default function (properties: NativeStackHeaderProps) {
-  const insets = useSafeAreaInsets();
+  // const insets = useSafeAreaInsets();
   const title = getHeaderTitle(properties.options, properties.route.name);
   const isLeadingIconShown = properties.navigation.canGoBack();
 
@@ -18,7 +18,9 @@ export default function (properties: NativeStackHeaderProps) {
     // Safe Area
     <View
       style={{
-        paddingTop: insets.top,
+        // Not sure what is better
+        // paddingTop: insets.top,
+        paddingTop: StatusBar.currentHeight,
         backgroundColor: theme.colors.light.surface,
       }}
     >
@@ -28,7 +30,10 @@ export default function (properties: NativeStackHeaderProps) {
             <Pressable
               style={styles.icon}
               onPress={properties.navigation.goBack}
-              android_ripple={{ radius: 24 / 2 + 8 }}
+              android_ripple={{
+                radius: 24 / 2 + 8,
+                color: theme.state.pressed.stateLayerOpacity,
+              }}
             >
               <ArrowBack fill={theme.colors.light.on.surface} />
             </Pressable>
