@@ -49,9 +49,11 @@ const styles = StyleSheet.create({
   },
   headline: {
     ...theme.typescale.body.large,
+    color: theme.colors.light.on.surface,
   },
   supportingText: {
     ...theme.typescale.body.medium,
+    color: theme.colors.light.on.surfaceVariant,
   },
   trailingIcons: {
     alignContent: "flex-end",

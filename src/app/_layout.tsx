@@ -1,18 +1,19 @@
 import { Stack } from "expo-router";
-import theme from "../theme";
 import TopAppBar from "../components/navigation/TopAppBar";
+import theme from "../theme";
 
 export default function () {
+  console.log("theme", theme.colors.light.surface);
   return (
     <Stack
       screenOptions={{
         headerStyle: {
-          backgroundColor: theme.yellow[50],
+          backgroundColor: theme.colors.light.surface,
         },
         headerShadowVisible: false,
-        headerTintColor: theme.green[950],
+        headerTintColor: theme.colors.light.on.surface,
         contentStyle: {
-          backgroundColor: theme.yellow[50],
+          backgroundColor: theme.colors.light.surface,
         },
         header: TopAppBar,
       }}

@@ -50,7 +50,7 @@ export default () => {
   return (
     <SafeAreaView style={styles.page}>
       <View>
-        <StatusBar style="auto" backgroundColor={theme.yellow[50]} />
+        <StatusBar style="auto" backgroundColor={theme.colors.light.surface} />
         <FlatList
           data={data}
           renderItem={({ item }) => (
@@ -84,14 +84,14 @@ export default () => {
 const styles = StyleSheet.create({
   page: {
     flex: 1,
-    backgroundColor: theme.yellow[50],
+    backgroundColor: theme.colors.light.surface,
     marginTop: RnStatusBar.currentHeight || 0,
   },
   title: {
     // fontSize: theme.typescale.headline.large.fontSize,
     // fontWeight: theme.typescale.headline.large.fontWeight,
     ...theme.typescale.headline.large,
-    color: theme.green[900],
+    color: theme.colors.light.on.surface,
     paddingHorizontal: theme.spacing.screen.compact,
   },
   itemList: {
@@ -111,13 +111,13 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     borderWidth: 2,
     borderRadius: 5,
-    borderColor: theme.green[800],
+    borderColor: theme.colors.light.primary,
     height: MINIMUM_TOUCH_TARGET_SIZE.height,
     flex: 1,
     padding: 10,
   },
   addButton: {
-    backgroundColor: theme.green[700],
+    backgroundColor: theme.colors.light.primary,
     borderRadius: 5,
     height: MINIMUM_TOUCH_TARGET_SIZE.height,
     justifyContent: "center",
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   addButtonText: {
-    color: theme.yellow[50],
+    color: theme.colors.light.on.primary,
     ...theme.typescale.label.large,
   },
 });

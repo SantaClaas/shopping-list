@@ -16,7 +16,12 @@ export default function (properties: NativeStackHeaderProps) {
   // For reference material large top app bar component & https://m3.material.io/styles/motion/transitions/transition-patterns#0673be6b-e8d0-4417-ac28-a3a5e621276a
   return (
     // Safe Area
-    <View style={{ paddingTop: insets.top, backgroundColor: theme.yellow[50] }}>
+    <View
+      style={{
+        paddingTop: insets.top,
+        backgroundColor: theme.colors.light.surface,
+      }}
+    >
       <View style={styles.appBar}>
         <View style={[styles.topRow]}>
           {isLeadingIconShown && (
@@ -25,7 +30,7 @@ export default function (properties: NativeStackHeaderProps) {
               onPress={properties.navigation.goBack}
               android_ripple={{ radius: 24 / 2 + 8 }}
             >
-              <ArrowBack fill={theme.green[950]} />
+              <ArrowBack fill={theme.colors.light.on.surface} />
             </Pressable>
           )}
 
@@ -54,7 +59,7 @@ const styles = StyleSheet.create({
     paddingBottom: 28,
     width: "100%",
     gap: 40,
-    backgroundColor: theme.yellow[50],
+    backgroundColor: theme.colors.light.surface,
   },
   topRow: {
     paddingTop: 8,
@@ -72,7 +77,7 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
   },
   headline: {
-    color: theme.green[950],
+    color: theme.colors.light.on.surface,
     paddingHorizontal: 16,
     ...theme.typescale.headline.medium,
   },
