@@ -1,10 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { eq, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
+import { migrate } from "drizzle-orm/expo-sqlite/migrator";
 import { openDatabaseAsync } from "expo-sqlite/next";
 import migrations from "./migrations/migrations";
-import { migrate } from "drizzle-orm/expo-sqlite/migrator";
-import { items } from "./schema";
-import { eq, sql } from "drizzle-orm";
+import { items, lists } from "./schema";
 
 async function initializeDatabase() {
   const expoDatabase = await openDatabaseAsync(".db");
@@ -25,6 +25,79 @@ function useDatabase() {
     staleTime: Infinity,
     gcTime: Infinity,
   });
+}
+export type List = typeof lists.$inferSelect;
+export type NewList = typeof lists.$inferInsert;
+export function useLists() {
+  const { data: database } = useDatabase();
+  const queryKey = "lists";
+
+  const query = useQuery({
+    queryKey: [queryKey, database] as const,
+    async queryFn({ queryKey: [_, database] }) {
+      // Query is only enabled if the database is available
+      return (await database!.select().from(lists)) satisfies List[];
+    },
+    enabled: !!database,
+  });
+
+  const queryClient = useQueryClient();
+  const insert = useMutation({
+    async mutationFn(list: NewList) {
+      await database?.insert(lists).values(list);
+    },
+    async onMutate(newList) {
+      // Optimistically update the cache
+      await queryClient.cancelQueries({ queryKey: [queryKey] });
+
+      // Snapshot the previous value
+      const previousLists = queryClient.getQueryData<List[]>([queryKey]);
+
+      // Optimistically update to the new value
+      queryClient.setQueryData<List[]>([queryKey], (old) =>
+        old ? [...old, newList] : [newList],
+      );
+
+      // Return a context object with the snapshotted value
+      return { previousLists };
+    },
+    onError(_error, _newList, context) {
+      // Rollback the cache update
+      queryClient.setQueryData([queryKey], context?.previousLists);
+      //TODO display error to user
+    },
+    // Don't refetch the query after success or failure
+    // because this is a local database and no one else is mutating it
+    // so we can easily and safely mirror the state
+  });
+
+  const deleter = useMutation({
+    async mutationFn(list: List) {
+      await database?.delete(lists).where(eq(lists.id, list.id));
+    },
+    async onMutate(deletedList) {
+      // Optimistically update the cache
+      await queryClient.cancelQueries({ queryKey: [queryKey] });
+
+      // Snapshot the previous value
+      const previousLists = queryClient.getQueryData<List[]>([queryKey]);
+
+      // Optimistically update to the new value
+      queryClient.setQueryData<List[]>([queryKey], (old) =>
+        old?.filter((list) => list.id !== deletedList.id),
+      );
+
+      // Return a context object with the snapshotted value
+      return { previousLists };
+    },
+    onError(_error, _deletedList, context) {
+      // Rollback the cache update
+      queryClient.setQueryData([queryKey], context?.previousLists);
+      //TODO display error to user
+    },
+  });
+
+  return { query, insert, delete: deleter };
 }
 
 export type Item = typeof items.$inferSelect;
@@ -57,7 +130,7 @@ export function useItems() {
 
       // Optimistically update to the new value
       queryClient.setQueryData<Item[]>([queryKey], (old) =>
-        old ? [...old, newItem] : [newItem]
+        old ? [...old, newItem] : [newItem],
       );
 
       // Return a context object with the snapshotted value
@@ -86,7 +159,7 @@ export function useItems() {
 
       // Optimistically update to the new value
       queryClient.setQueryData<Item[]>([queryKey], (old) =>
-        old?.filter((item) => item.id !== deletedItem.id)
+        old?.filter((item) => item.id !== deletedItem.id),
       );
 
       // Return a context object with the snapshotted value
