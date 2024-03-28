@@ -30,9 +30,7 @@ export default function ({
         <Text style={styles.headline}>{headline}</Text>
         <Text style={styles.supportingText}>{supportingText}</Text>
       </View>
-      <View style={styles.trailingIcons}>
-        {trailingIcon && <Pressable>{trailingIcon}</Pressable>}
-      </View>
+      <View style={styles.trailingIcons}>{trailingIcon}</View>
     </View>
     // </Pressable>
   );
@@ -43,9 +41,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     height: 72,
     paddingVertical: 8,
-    paddingLeft: 16,
-    paddingRight: 24,
-    gap: 10 /* + 6 icon left padding */,
+    paddingHorizontal: 16,
+    gap: 16,
     justifyContent: "space-between",
   },
   content: {
@@ -61,9 +58,6 @@ const styles = StyleSheet.create({
   },
   trailingIcons: {
     alignContent: "flex-end",
-  },
-  trailingIcon: {
-    ...MINIMUM_TOUCH_TARGET_SIZE,
-    padding: 12,
+    justifyContent: "center",
   },
 });
