@@ -1,14 +1,14 @@
-import { StyleSheet, View, Animated, Easing } from "react-native";
+import { Animated, Easing, StyleSheet, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
-import theme from "../theme";
-import { Delete } from "../icons";
 import { MINIMUM_TOUCH_TARGET_SIZE } from "..";
+import { Delete } from "../icons";
+import theme from "../theme";
 
 type AnimatedInterpolation = ReturnType<Animated.Value["interpolate"]>;
 
 export function LeftDeleteAction(
   _progress: AnimatedInterpolation,
-  drag: AnimatedInterpolation
+  drag: AnimatedInterpolation,
   //   _: Swipeable
 ) {
   const scale: Animated.AnimatedInterpolation<string | number> =
@@ -20,7 +20,7 @@ export function LeftDeleteAction(
   return (
     <View style={[{ alignItems: "flex-start" }, actionStyles.delete]}>
       <Animated.View style={{ transform: [{ scale }], opacity: scale }}>
-        <Delete fill={theme.yellow[50]} />
+        <Delete fill={theme.colors.light.error} />
       </Animated.View>
     </View>
   );
@@ -29,7 +29,7 @@ export function LeftDeleteAction(
 export function RightDeleteAction(
   _progress: AnimatedInterpolation,
   drag: AnimatedInterpolation,
-  _: Swipeable
+  _: Swipeable,
 ) {
   const scale = drag.interpolate({
     inputRange: [-100, 0],
@@ -40,14 +40,14 @@ export function RightDeleteAction(
   return (
     <View style={[{ alignItems: "flex-end" }, actionStyles.delete]}>
       <Animated.View style={{ transform: [{ scale }], opacity: scale }}>
-        <Delete fill={theme.yellow[50]} />
+        <Delete fill={theme.colors.light.surface} />
       </Animated.View>
     </View>
   );
 }
 const actionStyles = StyleSheet.create({
   delete: {
-    backgroundColor: theme.red[500],
+    backgroundColor: theme.colors.light.errorContainer,
     justifyContent: "center",
     paddingHorizontal: 12,
     // This fills the space and makes it swipe the whole width
@@ -62,11 +62,11 @@ export const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingLeft: theme.spacing.screen.compact,
-    backgroundColor: theme.yellow[50],
+    backgroundColor: theme.colors.light.surface,
     height: 56,
   },
   headline: {
-    color: theme.green[950],
+    color: theme.colors.light.on.surface,
     ...theme.typescale.body.large,
   },
   actions: {

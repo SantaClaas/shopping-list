@@ -10,6 +10,7 @@ import {
   StyleSheet,
   Text,
   TextInput,
+  TextInputProps,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -21,7 +22,7 @@ import { ArrowRight } from "../icons";
 import theme from "../theme";
 
 export default function () {
-  const [text, setText] = useState<string | undefined>(undefined);
+  const [text, setText] = useState<TextInputProps["value"]>(undefined);
   //TODO handle error
   const { query, insert, delete: deleter } = useLists();
   function handleSubmit() {

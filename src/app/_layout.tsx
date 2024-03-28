@@ -7,7 +7,6 @@ import theme from "../theme";
 const queryClient = new QueryClient();
 
 export default function () {
-  console.log("theme", theme.colors.light.surface);
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <QueryClientProvider client={queryClient}>

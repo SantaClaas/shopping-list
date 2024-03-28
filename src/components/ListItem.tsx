@@ -1,5 +1,5 @@
-import { Text, View, Pressable } from "react-native";
 import { useState } from "react";
+import { Pressable, Text, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import {
   default as Reanimated,
@@ -7,14 +7,14 @@ import {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
-import theme from "../theme";
+import { Item } from "../data";
 import {
   AddShoppingCart,
   CheckBoxOutlineBlank,
   RemoveShoppingCart,
 } from "../icons";
+import theme from "../theme";
 import { LeftDeleteAction, RightDeleteAction, styles } from "./ItemActions";
-import { Item } from "../data";
 
 export type ListItemProperties = {
   item: Item;
@@ -59,15 +59,15 @@ function ListItem({ item, onDelete, isGroupList }: ListItemProperties) {
               style={styles.action}
             >
               {isTaken ? (
-                <RemoveShoppingCart fill={theme.green[950]} />
+                <RemoveShoppingCart fill={theme.colors.light.on.surface} />
               ) : (
-                <AddShoppingCart fill={theme.green[950]} />
+                <AddShoppingCart fill={theme.colors.light.on.surface} />
               )}
             </Pressable>
           )}
 
           <Pressable style={styles.action}>
-            <CheckBoxOutlineBlank fill={theme.green[950]} />
+            <CheckBoxOutlineBlank fill={theme.colors.light.on.surface} />
           </Pressable>
         </View>
       </Reanimated.View>
