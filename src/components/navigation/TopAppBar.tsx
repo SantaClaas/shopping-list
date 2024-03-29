@@ -8,19 +8,16 @@ import { ArrowBack } from "../../icons";
 import theme from "../../theme";
 
 export default function (properties: NativeStackHeaderProps) {
-  // const insets = useSafeAreaInsets();
+  const insets = useSafeAreaInsets();
   const title = getHeaderTitle(properties.options, properties.route.name);
   const isLeadingIconShown = properties.navigation.canGoBack();
-
   //TODO integrate iOS native back button
   // For reference material large top app bar component & https://m3.material.io/styles/motion/transitions/transition-patterns#0673be6b-e8d0-4417-ac28-a3a5e621276a
   return (
     // Safe Area
     <View
       style={{
-        // Not sure what is better
-        // paddingTop: insets.top,
-        paddingTop: StatusBar.currentHeight,
+        paddingTop: insets.top,
         backgroundColor: theme.colors.light.surface,
       }}
     >
@@ -52,7 +49,9 @@ export default function (properties: NativeStackHeaderProps) {
           </View>
         </View>
 
-        <Text style={styles.headline}>{title}</Text>
+        <Text role="heading" style={styles.headline}>
+          {title}
+        </Text>
       </View>
     </View>
   );
