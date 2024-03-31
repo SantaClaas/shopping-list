@@ -1,17 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { and, eq, sql } from "drizzle-orm";
+import { and, count, eq, max, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { migrate } from "drizzle-orm/expo-sqlite/migrator";
-import { openDatabaseAsync } from "expo-sqlite/next";
+import { deleteDatabaseAsync, openDatabaseAsync } from "expo-sqlite/next";
+import { useEffect } from "react";
 import migrations from "./migrations/migrations";
 import { items, lists } from "./schema";
+import * as schema from "./schema";
 
 async function initializeDatabase() {
+  // if (__DEV__) await deleteDatabaseAsync(".db");r
+
   const expoDatabase = await openDatabaseAsync(".db");
   // Drizzle deez database
-  const database = drizzle(expoDatabase);
-  const result = database.run(sql`PRAGMA foreign_keys = ON;`);
-  console.debug("PRAGMA result", result);
+
+  const database = drizzle(expoDatabase, { schema, logger: __DEV__ });
+  database.run(sql`PRAGMA foreign_keys = ON;`);
 
   await migrate(database, migrations);
   return database;
@@ -26,18 +30,42 @@ function useDatabase() {
     gcTime: Infinity,
   });
 }
-export type List = typeof lists.$inferSelect;
-export type NewList = typeof lists.$inferInsert;
-export function useLists() {
-  const { data: database } = useDatabase();
-  const queryKey = "lists";
+export type List = typeof lists.$inferSelect & {
+  itemsCount: number;
+  // Can be null if there are no items
+  itemsLastUpdatedUtc: Date | null;
+};
 
+export type NewList = Required<typeof lists.$inferInsert>;
+const LISTS_KEY = "lists";
+export function useLists() {
+  const { data: database, error } = useDatabase();
+
+  useEffect(() => {
+    if (!error) return;
+    console.error("(TODO) Database Error", error);
+  }, [error]);
   const query = useQuery({
-    queryKey: [queryKey, database] as const,
-    async queryFn({ queryKey: [_, database] }) {
+    queryKey: [LISTS_KEY] as const,
+    async queryFn() {
       // Query is only enabled if the database is available
-      return (await database!.select().from(lists)) satisfies List[];
+      return (
+        (await database!
+          .select({
+            id: lists.id,
+            name: lists.name,
+            lastUpdatedUtc: lists.lastUpdatedUtc,
+            createdUtc: lists.createdUtc,
+            itemsCount: count(items.id),
+            itemsLastUpdatedUtc: max(items.lastUpdatedUtc),
+          })
+          .from(lists)
+          .leftJoin(items, eq(lists.id, items.listId))
+          // Group by is required, otherwise we get a row with everything set to null except the count which is 0
+          .groupBy(items.id)) satisfies List[]
+      );
     },
+    // This makes the query run as soon as the database is available
     enabled: !!database,
   });
 
@@ -48,22 +76,28 @@ export function useLists() {
     },
     async onMutate(newList) {
       // Optimistically update the cache
-      await queryClient.cancelQueries({ queryKey: [queryKey] });
+      await queryClient.cancelQueries({ queryKey: [LISTS_KEY] });
 
       // Snapshot the previous value
-      const previousLists = queryClient.getQueryData<List[]>([queryKey]);
+      const previousLists = queryClient.getQueryData<List[]>([LISTS_KEY]);
 
       // Optimistically update to the new value
-      queryClient.setQueryData<List[]>([queryKey], (old) =>
-        old ? [...old, newList] : [newList],
-      );
+      queryClient.setQueryData<List[]>([LISTS_KEY], (old) => {
+        const list = {
+          ...newList,
+          itemsCount: 0,
+          itemsLastUpdatedUtc: newList.lastUpdatedUtc,
+        };
+
+        return old ? [...old, list] : [list];
+      });
 
       // Return a context object with the snapshotted value
       return { previousLists };
     },
     onError(_error, _newList, context) {
       // Rollback the cache update
-      queryClient.setQueryData([queryKey], context?.previousLists);
+      queryClient.setQueryData([LISTS_KEY], context?.previousLists);
       //TODO display error to user
     },
     // Don't refetch the query after success or failure
@@ -77,13 +111,13 @@ export function useLists() {
     },
     async onMutate(deletedList) {
       // Optimistically update the cache
-      await queryClient.cancelQueries({ queryKey: [queryKey] });
+      await queryClient.cancelQueries({ queryKey: [LISTS_KEY] });
 
       // Snapshot the previous value
-      const previousLists = queryClient.getQueryData<List[]>([queryKey]);
+      const previousLists = queryClient.getQueryData<List[]>([LISTS_KEY]);
 
       // Optimistically update to the new value
-      queryClient.setQueryData<List[]>([queryKey], (old) =>
+      queryClient.setQueryData<List[]>([LISTS_KEY], (old) =>
         old?.filter((list) => list.id !== deletedList.id),
       );
 
@@ -92,7 +126,7 @@ export function useLists() {
     },
     onError(_error, _deletedList, context) {
       // Rollback the cache update
-      queryClient.setQueryData([queryKey], context?.previousLists);
+      queryClient.setQueryData([LISTS_KEY], context?.previousLists);
       //TODO display error to user
     },
   });
@@ -101,15 +135,33 @@ export function useLists() {
 }
 
 export type Item = typeof items.$inferSelect;
-export type NewItem = typeof items.$inferInsert;
+// Require all fields as defaults for types are just used as fallback and values should be set from application code
+export type NewItem = Required<typeof items.$inferInsert>;
+
+export function useList(id: string) {
+  const { data: database } = useDatabase();
+  const queryKey = ["lists", id] as const;
+
+  const query = useQuery({
+    queryKey: queryKey,
+    async queryFn({ queryKey: [, listId] }) {
+      return await database!.query.lists.findFirst({
+        where: (lists, { eq }) => eq(lists.id, listId),
+      });
+    },
+    enabled: !!database,
+  });
+
+  return query;
+}
 
 export function useListItems(listId: string) {
   const { data: database } = useDatabase();
   const queryKey = ["lists", listId, "items"] as const;
 
   const query = useQuery({
-    queryKey: [...queryKey, database] as const,
-    async queryFn({ queryKey: [, , , database] }) {
+    queryKey: queryKey,
+    async queryFn({ queryKey: [, listId] }) {
       // Query is only enabled if the database is available
       return (await database!
         .select()
@@ -147,6 +199,10 @@ export function useListItems(listId: string) {
     // Don't refetch the query after success or failure
     // because this is a local database and no one else is mutating it
     // so we can easily and safely mirror the state
+    onSuccess() {
+      // Invalidate the list query to refetch last updated and items count
+      queryClient.invalidateQueries({ queryKey: [LISTS_KEY] });
+    },
   });
 
   const deleter = useMutation({
@@ -174,6 +230,10 @@ export function useListItems(listId: string) {
       // Rollback the cache update
       queryClient.setQueryData(queryKey, context?.previousItems);
       //TODO display error to user
+    },
+    onSuccess() {
+      // Invalidate the list query to refetch last updated and items count
+      queryClient.invalidateQueries({ queryKey: [LISTS_KEY] });
     },
   });
 

@@ -1,4 +1,4 @@
-const APP_NAME = "shopping-list";
+const APP_NAME = "claash-list";
 /**
  * @param {import("expo/config").ConfigContext} configuration
  * @returns {import("expo/config").ExpoConfig}
@@ -21,6 +21,7 @@ export default (configuration) => ({
     supportsTablet: true,
   },
   android: {
+    package: "sh.claa.list",
     adaptiveIcon: {
       foregroundImage: "./assets/adaptive-icon.png",
       backgroundColor: "#FFFFFF",

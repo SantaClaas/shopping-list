@@ -1,6 +1,6 @@
 import * as Crypto from "expo-crypto";
 import { Link } from "expo-router";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   Keyboard,
   KeyboardAvoidingView,
@@ -17,47 +17,82 @@ import {
 import { FlatList } from "react-native-gesture-handler";
 import { MINIMUM_TOUCH_TARGET_SIZE } from "..";
 import ListItem1 from "../components/ListItem1";
-import { useLists } from "../data";
+import { NewList, useLists } from "../data";
 import { ArrowRight } from "../icons";
 import theme from "../theme";
+
+const DATE_FORMATTER = new Intl.DateTimeFormat(undefined, {
+  timeStyle: "short",
+  dateStyle: "short",
+});
 
 export default function () {
   const [text, setText] = useState<TextInputProps["value"]>(undefined);
   //TODO handle error
   const { query, insert, delete: deleter } = useLists();
+
+  useEffect(() => {
+    if (!query.error) return;
+    console.error("(TODO) Query Error", query.error);
+  }, [query.error]);
+  useEffect(() => {
+    if (!deleter.error) return;
+    console.error("(TODO) Delete Error", deleter.error);
+  }, [deleter.error]);
+  useEffect(() => {
+    if (!insert.error) return;
+    console.error("(TODO) Insert Error", insert.error);
+  }, [insert.error]);
+
   function handleSubmit() {
     if (!text) return;
 
     Keyboard.dismiss();
-    const newList = {
+    const now = new Date(Date.now());
+    const newList: NewList = {
       id: Crypto.randomUUID(),
       name: text,
+      createdUtc: now,
+      lastUpdatedUtc: now,
     };
     insert.mutate(newList);
     setText(undefined);
   }
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <FlatList
         data={query.data}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <Link href={`/lists/${item.id}`} asChild>
-            <Pressable
-              android_ripple={{
-                color: theme.state.pressed.stateLayerOpacity,
-              }}
-            >
-              <ListItem1
-                headline={item.name}
-                supportingText={"More list information coming soon"}
-                trailingIcon={
-                  <ArrowRight fill={theme.colors.light.on.surface} />
-                }
-              />
-            </Pressable>
-          </Link>
-        )}
+        renderItem={({ item: list }) => {
+          const date = list.lastUpdatedUtc
+            ? DATE_FORMATTER.format(list.lastUpdatedUtc)
+            : "";
+          // Add dot inbetween
+          const lastUpdated = list.lastUpdatedUtc
+            ? `, last updated ${date}`
+            : "";
+
+          console.debug("Render items count", list);
+          const supportingText = `${list.itemsCount} ${list.itemsCount === 1 ? "item" : "items"}${lastUpdated}`;
+          return (
+            <Link href={`/lists/${list.id}`} asChild>
+              <Pressable
+                android_ripple={{
+                  color: theme.state.pressed.stateLayerOpacity,
+                }}
+              >
+                <ListItem1
+                  headline={list.name}
+                  supportingText={supportingText}
+                  trailingIcon={
+                    <ArrowRight fill={theme.colors.light.on.surface} />
+                  }
+                />
+              </Pressable>
+            </Link>
+          );
+        }}
       />
 
       <KeyboardAvoidingView

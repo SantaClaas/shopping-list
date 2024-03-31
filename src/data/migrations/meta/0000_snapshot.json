@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "sqlite",
-  "id": "5d50729a-b23d-4f3d-839f-6da626a6db2b",
+  "id": "56b6db16-c2dd-4118-b162-71c5cef37b00",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "items": {
@@ -21,13 +21,6 @@
           "notNull": true,
           "autoincrement": false
         },
-        "timestamp_created_utc": {
-          "name": "timestamp_created_utc",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
         "name": {
           "name": "name",
           "type": "text",
@@ -41,6 +34,22 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "timestamp_created_utc": {
+          "name": "timestamp_created_utc",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch('now'))"
+        },
+        "last_updated_utc": {
+          "name": "last_updated_utc",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch('now'))"
         }
       },
       "indexes": {},
@@ -78,6 +87,22 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
+        },
+        "created_utc": {
+          "name": "created_utc",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch('now'))"
+        },
+        "last_updated_utc": {
+          "name": "last_updated_utc",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch('now'))"
         }
       },
       "indexes": {},

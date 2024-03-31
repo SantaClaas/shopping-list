@@ -1,5 +1,5 @@
 import * as Crypto from "expo-crypto";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -18,7 +18,7 @@ import {
 } from "react-native";
 import { MINIMUM_TOUCH_TARGET_SIZE } from "../..";
 import ListItem from "../../components/ListItem";
-import { Item, useListItems } from "../../data";
+import { Item, NewItem, useList, useListItems } from "../../data";
 import theme from "../../theme";
 
 export default () => {
@@ -26,21 +26,46 @@ export default () => {
   // Rerenders on type now but this might be useful later to show suggestions
   const [text, setText] = useState<TextInputProps["value"]>(undefined);
 
+  const { data: list, error } = useList(id);
   //TODO handle error
   const { query, insert, delete: deleter } = useListItems(id);
   const { data } = query;
+
+  useEffect(() => {
+    if (!query.error) return;
+    console.error("(TODO) Query Error", query.error);
+  }, [query.error]);
+  useEffect(() => {
+    if (!deleter.error) return;
+    console.error("(TODO) Delete Error", deleter.error);
+  }, [deleter.error]);
+  useEffect(() => {
+    if (!insert.error) return;
+    console.error("(TODO) Insert Error", insert.error);
+  }, [insert.error]);
+
+  const navigation = useNavigation();
+  // Set list name as header title
+  useEffect(() => {
+    if (!list) return;
+
+    const name = list.name;
+    navigation.setOptions({ headerTitle: name });
+  }, [navigation, list, error]);
 
   function handleSubmit() {
     if (!text) return;
 
     Keyboard.dismiss();
-    const newItem = {
+    const now = new Date(Date.now());
+    const newItem: NewItem = {
       id: Crypto.randomUUID(),
       listId: id,
       name: text,
       isChecked: false,
       // This is UTC in seconds isn't it?
-      createdTimestampUtc: new Date(Date.now()),
+      createdUtc: now,
+      lastUpdatedUtc: now,
     };
     insert.mutate(newItem);
     setText(undefined);

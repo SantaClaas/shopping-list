@@ -20,7 +20,7 @@ export function LeftDeleteAction(
   return (
     <View style={[{ alignItems: "flex-start" }, actionStyles.delete]}>
       <Animated.View style={{ transform: [{ scale }], opacity: scale }}>
-        <Delete fill={theme.colors.light.error} />
+        <Delete fill={theme.colors.light.errorContainer} />
       </Animated.View>
     </View>
   );
@@ -40,14 +40,14 @@ export function RightDeleteAction(
   return (
     <View style={[{ alignItems: "flex-end" }, actionStyles.delete]}>
       <Animated.View style={{ transform: [{ scale }], opacity: scale }}>
-        <Delete fill={theme.colors.light.surface} />
+        <Delete fill={theme.colors.light.errorContainer} />
       </Animated.View>
     </View>
   );
 }
 const actionStyles = StyleSheet.create({
   delete: {
-    backgroundColor: theme.colors.light.errorContainer,
+    backgroundColor: theme.colors.light.error,
     justifyContent: "center",
     paddingHorizontal: 12,
     // This fills the space and makes it swipe the whole width
