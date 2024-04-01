@@ -9,7 +9,7 @@ import { items, lists } from "./schema";
 import * as schema from "./schema";
 
 async function initializeDatabase() {
-  // if (__DEV__) await deleteDatabaseAsync(".db");r
+  // if (__DEV__) await deleteDatabaseAsync(".db");
 
   const expoDatabase = await openDatabaseAsync(".db");
   // Drizzle deez database
@@ -62,7 +62,7 @@ export function useLists() {
           .from(lists)
           .leftJoin(items, eq(lists.id, items.listId))
           // Group by is required, otherwise we get a row with everything set to null except the count which is 0
-          .groupBy(items.id)) satisfies List[]
+          .groupBy(lists.id)) satisfies List[]
       );
     },
     // This makes the query run as soon as the database is available
@@ -126,7 +126,7 @@ export function useLists() {
     },
     onError(_error, _deletedList, context) {
       // Rollback the cache update
-      queryClient.setQueryData([LISTS_KEY], context?.previousLists);
+      queryClient.setQueryData(LISTS_KEY, context?.previousLists);
       //TODO display error to user
     },
   });
@@ -201,7 +201,7 @@ export function useListItems(listId: string) {
     // so we can easily and safely mirror the state
     onSuccess() {
       // Invalidate the list query to refetch last updated and items count
-      queryClient.invalidateQueries({ queryKey: [LISTS_KEY] });
+      queryClient.invalidateQueries({ queryKey: LISTS_KEY });
     },
   });
 
@@ -233,7 +233,7 @@ export function useListItems(listId: string) {
     },
     onSuccess() {
       // Invalidate the list query to refetch last updated and items count
-      queryClient.invalidateQueries({ queryKey: [LISTS_KEY] });
+      queryClient.invalidateQueries({ queryKey: LISTS_KEY });
     },
   });
 

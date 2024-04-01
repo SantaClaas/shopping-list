@@ -73,7 +73,6 @@ export default function () {
             ? `, last updated ${date}`
             : "";
 
-          console.debug("Render items count", list);
           const supportingText = `${list.itemsCount} ${list.itemsCount === 1 ? "item" : "items"}${lastUpdated}`;
           return (
             <Link href={`/lists/${list.id}`} asChild>
