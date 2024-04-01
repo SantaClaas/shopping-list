@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useEffect, useState } from "react";
+import { Pressable, StyleSheet, Text, TextStyle, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
 import {
   default as Reanimated,
@@ -11,6 +11,7 @@ import { MINIMUM_TOUCH_TARGET_SIZE } from "..";
 import { Item } from "../data";
 import {
   AddShoppingCart,
+  CheckBox,
   CheckBoxOutlineBlank,
   RemoveShoppingCart,
 } from "../icons";
@@ -21,10 +22,18 @@ export type ListItemProperties = {
   item: Item;
   onDelete: () => void;
   isGroupList: boolean;
+  isChecked: boolean;
+  onCheckboxPress: () => void;
 };
 
 const ITEM_HEIGHT = 56;
-function ListItem({ item, onDelete, isGroupList }: ListItemProperties) {
+function ListItem({
+  item,
+  onDelete,
+  isGroupList,
+  isChecked,
+  onCheckboxPress,
+}: ListItemProperties) {
   const height = useSharedValue(ITEM_HEIGHT);
   function startDeleteAnimation(callback: () => void) {
     height.value = withTiming(0, undefined, () => runOnJS(callback)());
@@ -53,7 +62,14 @@ function ListItem({ item, onDelete, isGroupList }: ListItemProperties) {
           },
         ]}
       >
-        <Text style={styles.headline}>{item.name}</Text>
+        <Text
+          style={[
+            styles.headline,
+            isChecked ? styles.checked : styles.unChecked,
+          ]}
+        >
+          {item.name}
+        </Text>
         <View style={styles.actions}>
           {isGroupList && (
             <Pressable
@@ -68,8 +84,16 @@ function ListItem({ item, onDelete, isGroupList }: ListItemProperties) {
             </Pressable>
           )}
 
-          <Pressable style={styles.action}>
-            <CheckBoxOutlineBlank fill={theme.colors.light.on.surface} />
+          <Pressable
+            style={styles.action}
+            hitSlop={12}
+            onPress={onCheckboxPress}
+          >
+            {isChecked ? (
+              <CheckBox fill={theme.colors.light.on.surface} />
+            ) : (
+              <CheckBoxOutlineBlank fill={theme.colors.light.on.surface} />
+            )}
           </Pressable>
         </View>
       </Reanimated.View>
@@ -83,9 +107,14 @@ const styles = StyleSheet.create({
     alignContent: "center",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingLeft: theme.spacing.screen.compact,
+    paddingHorizontal: theme.spacing.screen.compact,
     backgroundColor: theme.colors.light.surface,
     height: ITEM_HEIGHT,
+  },
+  unChecked: {},
+  checked: {
+    textDecorationLine: "line-through",
+    textDecorationStyle: "solid",
   },
   headline: {
     color: theme.colors.light.on.surface,
@@ -95,7 +124,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   action: {
-    ...MINIMUM_TOUCH_TARGET_SIZE,
     justifyContent: "center",
     alignItems: "center",
   },

@@ -28,7 +28,7 @@ export default () => {
 
   const { data: list, error } = useList(id);
   //TODO handle error
-  const { query, insert, delete: deleter } = useListItems(id);
+  const { query, insert, delete: deleter, updateIsChecked } = useListItems(id);
   const { data } = query;
 
   useEffect(() => {
@@ -84,6 +84,13 @@ export default () => {
               item={item}
               onDelete={() => deleter.mutate(item)}
               isGroupList={false}
+              isChecked={item.isChecked}
+              onCheckboxPress={() =>
+                updateIsChecked.mutate({
+                  itemId: item.id,
+                  isChecked: !item.isChecked,
+                })
+              }
             />
           )}
         />

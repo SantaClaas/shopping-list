@@ -237,5 +237,59 @@ export function useListItems(listId: string) {
     },
   });
 
-  return { query, insert, delete: deleter };
+  const updateIsChecked = useMutation({
+    async mutationFn({
+      itemId,
+      isChecked,
+    }: {
+      itemId: string;
+      isChecked: boolean;
+    }) {
+      await database
+        ?.update(items)
+        .set({ isChecked, lastUpdatedUtc: new Date(Date.now()) })
+        .where(and(eq(items.id, itemId), eq(items.listId, listId)));
+    },
+    async onMutate({
+      itemId,
+      isChecked,
+    }: {
+      itemId: string;
+      isChecked: boolean;
+    }) {
+      // Optimistically update the cache
+      await queryClient.cancelQueries({ queryKey });
+
+      // Snapshot the previous value
+      const previousItems = queryClient.getQueryData<Item[]>(queryKey);
+
+      // Optimistically update to the new value
+      queryClient.setQueryData<Item[]>(queryKey, (old) => {
+        if (!old) return old;
+
+        const index = old?.findIndex((item) => item.id === itemId);
+
+        // Could be a warning level because updating a non-existent item is weird
+        if (index === -1) return old;
+
+        old[index].isChecked = isChecked;
+
+        return old;
+      });
+
+      // Return a context object with the snapshotted value
+      return { previousItems };
+    },
+    onError(_error, _updated, context) {
+      // Rollback the cache update
+      queryClient.setQueryData(queryKey, context?.previousItems);
+      //TODO display error to user
+    },
+    onSuccess() {
+      // Invalidate the general list query to refetch last updated
+      queryClient.invalidateQueries({ queryKey: LISTS_KEY });
+    },
+  });
+
+  return { query, insert, delete: deleter, updateIsChecked };
 }
