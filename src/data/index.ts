@@ -37,7 +37,7 @@ export type List = typeof lists.$inferSelect & {
 };
 
 export type NewList = Required<typeof lists.$inferInsert>;
-const LISTS_KEY = "lists";
+const LISTS_KEY = ["lists"] as const;
 export function useLists() {
   const { data: database, error } = useDatabase();
 
@@ -46,7 +46,7 @@ export function useLists() {
     console.error("(TODO) Database Error", error);
   }, [error]);
   const query = useQuery({
-    queryKey: [LISTS_KEY] as const,
+    queryKey: LISTS_KEY,
     async queryFn() {
       // Query is only enabled if the database is available
       return (
@@ -70,23 +70,23 @@ export function useLists() {
   });
 
   const queryClient = useQueryClient();
-  const insert = useMutation({
+  const createList = useMutation({
     async mutationFn(list: NewList) {
       await database?.insert(lists).values(list);
     },
     async onMutate(newList) {
       // Optimistically update the cache
-      await queryClient.cancelQueries({ queryKey: [LISTS_KEY] });
+      await queryClient.cancelQueries({ queryKey: LISTS_KEY });
 
       // Snapshot the previous value
-      const previousLists = queryClient.getQueryData<List[]>([LISTS_KEY]);
+      const previousLists = queryClient.getQueryData<List[]>(LISTS_KEY);
 
       // Optimistically update to the new value
-      queryClient.setQueryData<List[]>([LISTS_KEY], (old) => {
+      queryClient.setQueryData<List[]>(LISTS_KEY, (old) => {
         const list = {
           ...newList,
           itemsCount: 0,
-          itemsLastUpdatedUtc: newList.lastUpdatedUtc,
+          itemsLastUpdatedUtc: null,
         };
 
         return old ? [...old, list] : [list];
@@ -97,7 +97,7 @@ export function useLists() {
     },
     onError(_error, _newList, context) {
       // Rollback the cache update
-      queryClient.setQueryData([LISTS_KEY], context?.previousLists);
+      queryClient.setQueryData(LISTS_KEY, context?.previousLists);
       //TODO display error to user
     },
     // Don't refetch the query after success or failure
@@ -105,19 +105,19 @@ export function useLists() {
     // so we can easily and safely mirror the state
   });
 
-  const deleter = useMutation({
+  const deleteList = useMutation({
     async mutationFn(list: List) {
       await database?.delete(lists).where(eq(lists.id, list.id));
     },
     async onMutate(deletedList) {
       // Optimistically update the cache
-      await queryClient.cancelQueries({ queryKey: [LISTS_KEY] });
+      await queryClient.cancelQueries({ queryKey: LISTS_KEY });
 
       // Snapshot the previous value
-      const previousLists = queryClient.getQueryData<List[]>([LISTS_KEY]);
+      const previousLists = queryClient.getQueryData<List[]>(LISTS_KEY);
 
       // Optimistically update to the new value
-      queryClient.setQueryData<List[]>([LISTS_KEY], (old) =>
+      queryClient.setQueryData<List[]>(LISTS_KEY, (old) =>
         old?.filter((list) => list.id !== deletedList.id),
       );
 
@@ -131,7 +131,7 @@ export function useLists() {
     },
   });
 
-  return { query, insert, delete: deleter };
+  return { query, createList, deleteList };
 }
 
 export type Item = typeof items.$inferSelect;

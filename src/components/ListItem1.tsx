@@ -1,37 +1,63 @@
 // List item with one lines of supporting text
 
+import { StyleSheet, Text, View } from "react-native";
+import { Swipeable } from "react-native-gesture-handler";
 import {
-  GestureResponderEvent,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
-import { MINIMUM_TOUCH_TARGET_SIZE } from "..";
+  default as Reanimated,
+  runOnJS,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
 import theme from "../theme";
+import { LeftDeleteAction, RightDeleteAction } from "./ItemActions";
 
 export type ListItem1Properties = {
   trailingIcon?: React.ReactNode;
   headline: string;
   supportingText: string;
+  onDelete: () => void;
 };
+
+const ITEM_HEIGHT = 72;
 export default function ({
   trailingIcon,
   headline,
   supportingText,
+  onDelete,
 }: ListItem1Properties) {
-  const paddingRight = trailingIcon ? 16 : 10; /* + 6 icon right padding */
+  const height = useSharedValue(ITEM_HEIGHT);
+  function startDeleteAnimation(callback: () => void) {
+    height.value = withTiming(0, undefined, () => runOnJS(callback)());
+  }
+
+  function handleDeleteSwipe() {
+    startDeleteAnimation(onDelete);
+  }
+
   return (
     //TODO figure out why ripple does not work
     // Pressable needs to be outer to use Link asChild property
     // <Pressable style={styles.item} onPress={onPress} android_ripple={{}}>
-    <View style={styles.item}>
-      <View>
-        <Text style={styles.headline}>{headline}</Text>
-        <Text style={styles.supportingText}>{supportingText}</Text>
-      </View>
-      <View style={styles.trailingIcons}>{trailingIcon}</View>
-    </View>
+    <Swipeable
+      renderLeftActions={LeftDeleteAction}
+      renderRightActions={RightDeleteAction}
+      onSwipeableOpen={handleDeleteSwipe}
+    >
+      <Reanimated.View
+        style={[
+          styles.item,
+          {
+            height,
+          },
+        ]}
+      >
+        <View>
+          <Text style={styles.headline}>{headline}</Text>
+          <Text style={styles.supportingText}>{supportingText}</Text>
+        </View>
+        <View style={styles.trailingIcons}>{trailingIcon}</View>
+      </Reanimated.View>
+    </Swipeable>
     // </Pressable>
   );
 }
@@ -39,11 +65,12 @@ export default function ({
 const styles = StyleSheet.create({
   item: {
     flexDirection: "row",
-    height: 72,
+    height: ITEM_HEIGHT,
     paddingVertical: 8,
     paddingHorizontal: 16,
     gap: 16,
     justifyContent: "space-between",
+    backgroundColor: theme.colors.light.surface,
   },
   content: {
     flex: 1,

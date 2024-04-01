@@ -1,6 +1,5 @@
-import { Animated, Easing, StyleSheet, View } from "react-native";
+import { Animated, StyleSheet, View } from "react-native";
 import { Swipeable } from "react-native-gesture-handler";
-import { MINIMUM_TOUCH_TARGET_SIZE } from "..";
 import { Delete } from "../icons";
 import theme from "../theme";
 
@@ -52,29 +51,5 @@ const actionStyles = StyleSheet.create({
     paddingHorizontal: 12,
     // This fills the space and makes it swipe the whole width
     flex: 1,
-  },
-});
-
-export const styles = StyleSheet.create({
-  item: {
-    flexDirection: "row",
-    alignContent: "center",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingLeft: theme.spacing.screen.compact,
-    backgroundColor: theme.colors.light.surface,
-    height: 56,
-  },
-  headline: {
-    color: theme.colors.light.on.surface,
-    ...theme.typescale.body.large,
-  },
-  actions: {
-    flexDirection: "row",
-  },
-  action: {
-    ...MINIMUM_TOUCH_TARGET_SIZE,
-    justifyContent: "center",
-    alignItems: "center",
   },
 });

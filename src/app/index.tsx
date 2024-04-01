@@ -29,7 +29,7 @@ const DATE_FORMATTER = new Intl.DateTimeFormat(undefined, {
 export default function () {
   const [text, setText] = useState<TextInputProps["value"]>(undefined);
   //TODO handle error
-  const { query, insert, delete: deleter } = useLists();
+  const { query, createList, deleteList: deleter } = useLists();
 
   useEffect(() => {
     if (!query.error) return;
@@ -40,9 +40,9 @@ export default function () {
     console.error("(TODO) Delete Error", deleter.error);
   }, [deleter.error]);
   useEffect(() => {
-    if (!insert.error) return;
-    console.error("(TODO) Insert Error", insert.error);
-  }, [insert.error]);
+    if (!createList.error) return;
+    console.error("(TODO) Insert Error", createList.error);
+  }, [createList.error]);
 
   function handleSubmit() {
     if (!text) return;
@@ -55,7 +55,7 @@ export default function () {
       createdUtc: now,
       lastUpdatedUtc: now,
     };
-    insert.mutate(newList);
+    createList.mutate(newList);
     setText(undefined);
   }
 
@@ -85,6 +85,7 @@ export default function () {
                 <ListItem1
                   headline={list.name}
                   supportingText={supportingText}
+                  onDelete={() => deleter.mutate(list)}
                   trailingIcon={
                     <ArrowRight fill={theme.colors.light.on.surface} />
                   }
