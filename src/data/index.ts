@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { and, count, eq, max, sql } from "drizzle-orm";
+import { and, count, desc, eq, max, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { migrate } from "drizzle-orm/expo-sqlite/migrator";
 import { deleteDatabaseAsync, openDatabaseAsync } from "expo-sqlite/next";
@@ -61,6 +61,12 @@ export function useLists() {
           })
           .from(lists)
           .leftJoin(items, eq(lists.id, items.listId))
+          .orderBy(
+            desc(
+              // Get last update date
+              sql`max(max(coalesce(${items.lastUpdatedUtc}, 0)),${lists.lastUpdatedUtc},${lists.createdUtc})`,
+            ),
+          )
           // Group by is required, otherwise we get a row with everything set to null except the count which is 0
           .groupBy(lists.id)) satisfies List[]
       );
