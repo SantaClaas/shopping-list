@@ -115,6 +115,8 @@ const styles = StyleSheet.create({
   checked: {
     textDecorationLine: "line-through",
     textDecorationStyle: "solid",
+    textDecorationColor: theme.colors.light.on.surfaceVariant,
+    color: theme.colors.light.on.surfaceVariant,
   },
   headline: {
     color: theme.colors.light.on.surface,

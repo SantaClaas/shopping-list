@@ -26,6 +26,14 @@ const DATE_FORMATTER = new Intl.DateTimeFormat(undefined, {
   dateStyle: "short",
 });
 
+const UNIX_EPOCH = new Date(0);
+
+function maxDate(a: Date, b: Date, c: Date) {
+  if (a > b && a > c) return a;
+  if (b > c) return b;
+  return c;
+}
+
 export default function () {
   const [text, setText] = useState<TextInputProps["value"]>(undefined);
   //TODO handle error
@@ -65,13 +73,16 @@ export default function () {
         data={query.data}
         keyExtractor={(item) => item.id}
         renderItem={({ item: list }) => {
-          const date = list.lastUpdatedUtc
-            ? DATE_FORMATTER.format(list.lastUpdatedUtc)
-            : "";
+          const lastUpdatedDate = maxDate(
+            list.createdUtc,
+            list.lastUpdatedUtc,
+            list.itemsLastUpdatedUtc ?? UNIX_EPOCH,
+          );
+
+          const date = DATE_FORMATTER.format(lastUpdatedDate);
+
           // Add dot inbetween
-          const lastUpdated = list.lastUpdatedUtc
-            ? `, last updated ${date}`
-            : "";
+          const lastUpdated = `, last updated ${date}`;
 
           const supportingText = `${list.itemsCount} ${list.itemsCount === 1 ? "item" : "items"}${lastUpdated}`;
           return (

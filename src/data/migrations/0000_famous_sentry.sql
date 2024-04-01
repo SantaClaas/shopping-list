@@ -17,34 +17,34 @@ CREATE TABLE `lists` (
 
 -- Custom migration SQL
 
--- Update last updated timestamp for list if items for list were mutated
--- Have to create for each mutation type manually
-
+-- Update last updated timestamp for list if list was changed
+-- List should only track its own properties and not the items
+-- If we want to show when the items and/or list was last updated, we can query the items and lists table
 -- On delete
 CREATE TRIGGER on_delete_update_list_last_updated
-AFTER DELETE ON items
+AFTER DELETE ON lists
 BEGIN
   UPDATE lists
   SET last_updated_utc = unixepoch()
-  WHERE lists.id = NEW.list_id;
+  WHERE lists.id = NEW.id;
 END;
 
 -- On insert
 CREATE TRIGGER on_insert_update_list_last_updated
-AFTER INSERT ON items
+AFTER INSERT ON lists
 BEGIN
   UPDATE lists
   SET last_updated_utc = unixepoch()
-  WHERE lists.id = NEW.list_id;
+  WHERE lists.id = NEW.id;
 END;
 
 -- On update
 CREATE TRIGGER on_update_update_list_last_updated
-AFTER UPDATE ON items
+AFTER UPDATE ON lists
 BEGIN
   UPDATE lists
   SET last_updated_utc = unixepoch()
-  WHERE lists.id = NEW.list_id;
+  WHERE lists.id = NEW.id;
 END;
 
 

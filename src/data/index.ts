@@ -245,8 +245,8 @@ export function useListItems(listId: string) {
       itemId: string;
       isChecked: boolean;
     }) {
-      await database
-        ?.update(items)
+      await database!
+        .update(items)
         .set({ isChecked, lastUpdatedUtc: new Date(Date.now()) })
         .where(and(eq(items.id, itemId), eq(items.listId, listId)));
     },
