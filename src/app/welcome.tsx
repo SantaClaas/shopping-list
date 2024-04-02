@@ -16,7 +16,7 @@ export default function () {
         <View style={styles.header}>
           <Text style={styles.headline}>Welcome</Text>
           <Text style={styles.explainer}>
-            Create a list or join by scanning a QR-Code
+            Create a list or join one by scanning a QR-Code
           </Text>
         </View>
         <View style={styles.actions}>
