@@ -1,11 +1,5 @@
-import {
-  Pressable,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View,
-  ViewStyle,
-} from "react-native";
+import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import Button from "../components/Button";
 import { Add, QrCodeScanner } from "../icons";
 import theme from "../theme";
 
@@ -16,18 +10,12 @@ export default function () {
         <View style={styles.header}>
           <Text style={styles.headline}>Welcome</Text>
           <Text style={styles.explainer}>
-            Create a list or join one by scanning a QR-Code
+            Create a list or join one by scanning their QR-Code
           </Text>
         </View>
         <View style={styles.actions}>
-          <Pressable style={styles.button}>
-            <Add fill={theme.colors.light.on.primary} />
-            <Text style={styles.buttonLabel}>Create</Text>
-          </Pressable>
-          <Pressable style={styles.button}>
-            <QrCodeScanner fill={theme.colors.light.on.primary} />
-            <Text style={styles.buttonLabel}>Join</Text>
-          </Pressable>
+          <Button style="filled" label="Create" icon={Add} />
+          <Button style="outlined" label="Join" icon={QrCodeScanner} />
         </View>
       </View>
     </SafeAreaView>
