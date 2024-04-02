@@ -1,5 +1,5 @@
 import * as Crypto from "expo-crypto";
-import { Link } from "expo-router";
+import { Link, Redirect, router } from "expo-router";
 import { useEffect, useRef, useState } from "react";
 import {
   Keyboard,
@@ -67,12 +67,21 @@ export default function () {
     setText(undefined);
   }
 
+  // useEffect(() => {
+  //   if (!query.data) return;
+  //   router.replace("/welcome");
+  // }, [query.data]);
+
+  if (__DEV__ || (query.data && query.data.length === 0))
+    return <Redirect href="/welcome" />;
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <FlatList
         data={query.data}
         keyExtractor={(item) => item.id}
         renderItem={({ item: list }) => {
+          //TODO use memo?
           const lastUpdatedDate = maxDate(
             list.createdUtc,
             list.lastUpdatedUtc,
@@ -81,7 +90,6 @@ export default function () {
 
           const date = DATE_FORMATTER.format(lastUpdatedDate);
 
-          // Add dot inbetween
           const lastUpdated = `, last updated ${date}`;
 
           const supportingText = `${list.itemsCount} ${list.itemsCount === 1 ? "item" : "items"}${lastUpdated}`;

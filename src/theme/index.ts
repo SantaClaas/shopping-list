@@ -49,7 +49,32 @@ export default {
     },
   },
   typescale: {
-    dispay: {},
+    dispay: {
+      large: {
+        // fontFamily: "Roboto",
+        // fontStyle: "regular",
+        fontWeight: "400",
+        fontSize: 57,
+        lineHeight: 64,
+        letterSpacing: -0.25,
+      } satisfies TextStyle,
+      medium: {
+        // fontFamily: "Roboto",
+        // fontStyle: "regular",
+        fontWeight: "400",
+        fontSize: 45,
+        lineHeight: 52,
+        letterSpacing: 0,
+      } satisfies TextStyle,
+      small: {
+        // fontFamily: "Roboto",
+        // fontStyle: "regular",
+        fontWeight: "400",
+        fontSize: 36,
+        lineHeight: 44,
+        letterSpacing: 0,
+      } satisfies TextStyle,
+    },
     headline: {
       large: {
         fontWeight: "400" as const,

@@ -30,6 +30,7 @@ export default function () {
             }}
           />
           <Stack.Screen name="lists/[id]" options={{ headerTitle: "List" }} />
+          <Stack.Screen name="welcome" options={{ headerShown: false }} />
         </Stack>
       </QueryClientProvider>
     </GestureHandlerRootView>
