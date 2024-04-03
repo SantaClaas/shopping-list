@@ -1,3 +1,4 @@
+import { router } from "expo-router";
 import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import Button from "../components/Button";
 import { Add, QrCodeScanner } from "../icons";
@@ -14,7 +15,12 @@ export default function () {
           </Text>
         </View>
         <View style={styles.actions}>
-          <Button style="filled" label="Create" icon={Add} />
+          <Button
+            style="filled"
+            label="Create"
+            icon={Add}
+            onPress={() => router.navigate("/lists/new")}
+          />
           <Button style="outlined" label="Join" icon={QrCodeScanner} />
         </View>
       </View>
