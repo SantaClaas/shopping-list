@@ -95,7 +95,8 @@ export function useLists() {
           itemsLastUpdatedUtc: null,
         };
 
-        return old ? [...old, list] : [list];
+        // The new list should be the latest so we prepend it
+        return old ? [list, ...old] : [list];
       });
 
       // Return a context object with the snapshotted value

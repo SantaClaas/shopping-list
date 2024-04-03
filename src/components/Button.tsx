@@ -1,13 +1,30 @@
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import {
+  Pressable,
+  PressableProps,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import * as Icons from "../icons";
 import theme from "../theme";
 
 // Limiting icons to defined icons might be overkill
 type Icon = (typeof Icons)[keyof typeof Icons];
 type ButtonStyle = "filled" | "outlined";
-type ButtonProperties = { icon?: Icon; label: string; style: ButtonStyle };
+type ButtonProperties = {
+  label: string;
+  style: ButtonStyle;
+  icon?: Icon;
+  onPress?: PressableProps["onPress"];
+};
 
-export default function ({ icon: Icon, label, style }: ButtonProperties) {
+export default function ({
+  icon: Icon,
+  label,
+  style,
+  onPress,
+}: ButtonProperties) {
   let buttonStyle, color;
 
   switch (style) {
@@ -22,7 +39,7 @@ export default function ({ icon: Icon, label, style }: ButtonProperties) {
   }
 
   return (
-    <Pressable style={[styles.button, buttonStyle]}>
+    <Pressable style={[styles.button, buttonStyle]} onPress={onPress}>
       {Icon && <Icon fill={color} />}
 
       <Text style={[styles.buttonLabel, { color }]}>{label}</Text>

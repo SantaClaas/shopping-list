@@ -46,10 +46,12 @@ const styles = StyleSheet.create({
     ...theme.typescale.body.large,
     color: theme.colors.light.on.surface,
     marginTop: 16,
+    textAlign: "center",
   },
   actions: {
     gap: 16,
     alignSelf: "stretch",
+    marginBottom: 16,
   },
   button: {
     backgroundColor: theme.colors.light.primary,

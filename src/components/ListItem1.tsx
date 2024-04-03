@@ -51,7 +51,7 @@ export default function ({
           },
         ]}
       >
-        <View>
+        <View style={styles.content}>
           <Text style={styles.headline}>{headline}</Text>
           <Text style={styles.supportingText}>{supportingText}</Text>
         </View>
@@ -62,7 +62,7 @@ export default function ({
   );
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   item: {
     flexDirection: "row",
     height: ITEM_HEIGHT,
@@ -72,9 +72,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: theme.colors.light.surface,
   },
-  content: {
-    flex: 1,
-  },
+  content: { flex: 1 },
   headline: {
     ...theme.typescale.body.large,
     color: theme.colors.light.on.surface,

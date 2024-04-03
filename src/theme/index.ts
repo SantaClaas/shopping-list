@@ -1,9 +1,122 @@
-import { TextStyle } from "react-native";
+import { Platform, TextStyle, ViewStyle } from "react-native";
 // Prettier sort import attributes plugin can't handle import assertions 🥲
 import color from "./color.json" /* with { type: "json" }*/;
 
 export default {
   ...color,
+  //   --md-sys-elevation-light-level-1-shadow: 0px 1px 3px 1px rgba(0, 0, 0, 0.15),
+  //   0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+  // --md-sys-elevation-light-level-2-shadow: 0px 2px 6px 2px rgba(0, 0, 0, 0.15),
+  //   0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+  // --md-sys-elevation-light-level-3-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.3),
+  //   0px 4px 8px 3px rgba(0, 0, 0, 0.15);
+  // --md-sys-elevation-light-level-4-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.3),
+  //   0px 6px 10px 4px rgba(0, 0, 0, 0.15);
+  // --md-sys-elevation-light-level-5-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.3),
+  //   0px 8px 12px 6px rgba(0, 0, 0, 0.15);
+  elevation: {
+    light: {
+      level0: {
+        // shadow: none
+        elevation: 0,
+        zIndex: 0,
+      } satisfies ViewStyle,
+      level1: {
+        shadowColor: color.colors.light.shadow,
+        zIndex: 1,
+
+        // iOS
+        shadowOffset: {
+          width: 0,
+          height: 1,
+        },
+        shadowRadius: 3,
+        shadowOpacity: 0.15,
+        // spreadRadius: 1,
+
+        // Android
+        elevation: 1,
+      } satisfies ViewStyle,
+      level2: {
+        shadowColor: color.colors.light.shadow,
+        zIndex: 3,
+
+        // iOS
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowRadius: 6,
+        shadowOpacity: 0.15,
+        // spreadRadius: 2,
+
+        // Android
+        elevation: 3,
+      } satisfies ViewStyle,
+      level3: {
+        shadowColor: color.colors.light.shadow,
+        zIndex: 6,
+
+        // iOS
+        shadowOffset: {
+          width: 0,
+          height: 1,
+        },
+        shadowRadius: 3,
+        shadowOpacity: 0.15,
+        // spreadRadius: 0,
+
+        // Android
+        elevation: 6,
+      } satisfies ViewStyle,
+      level4: {
+        shadowColor: color.colors.light.shadow,
+        zIndex: 8,
+
+        // Android
+        elevation: 8,
+      } satisfies ViewStyle,
+      level5: {
+        shadowColor: color.colors.light.shadow,
+        zIndex: 12,
+
+        // Android
+        elevation: 12,
+      } satisfies ViewStyle,
+    },
+    dark: {
+      level0: {
+        shadowColor: color.colors.dark.shadow,
+        elevation: 0,
+        zIndex: 0,
+      } satisfies ViewStyle,
+      level1: {
+        shadowColor: color.colors.dark.shadow,
+        elevation: 1,
+        zIndex: 1,
+      } satisfies ViewStyle,
+      level2: {
+        shadowColor: color.colors.dark.shadow,
+        elevation: 3,
+        zIndex: 3,
+      } satisfies ViewStyle,
+      level3: {
+        shadowColor: color.colors.dark.shadow,
+        elevation: 6,
+        zIndex: 6,
+      } satisfies ViewStyle,
+      level4: {
+        shadowColor: color.colors.dark.shadow,
+        elevation: 8,
+        zIndex: 8,
+      } satisfies ViewStyle,
+      level5: {
+        shadowColor: color.colors.dark.shadow,
+        elevation: 12,
+        zIndex: 12,
+      } satisfies ViewStyle,
+    },
+  },
   shape: {
     corner: {
       none: 0,
@@ -13,7 +126,7 @@ export default {
       large: 16,
       extraLarge: 28,
       full: "100%",
-    },
+    } as const,
   },
   spacing: {
     /**
