@@ -29,6 +29,10 @@ export default function () {
               headerTitle: "Shopping Lists",
             }}
           />
+          <Stack.Screen
+            name="lists/new"
+            options={{ headerTitle: "Shopping Lists" }}
+          />
           <Stack.Screen name="lists/[id]" options={{ headerTitle: "List" }} />
           <Stack.Screen name="welcome" options={{ headerShown: false }} />
         </Stack>
