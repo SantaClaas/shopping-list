@@ -11,6 +11,7 @@ export default function () {
     mutation.mutate(true);
     router.replace("/lists/new");
   }
+
   return (
     <SafeAreaView style={styles.page}>
       <View style={styles.content}>
@@ -27,7 +28,12 @@ export default function () {
             icon={Add}
             onPress={handleCreate}
           />
-          <Button style="outlined" label="Join" icon={QrCodeScanner} />
+          <Button
+            style="outlined"
+            label="Join"
+            icon={QrCodeScanner}
+            onPress={() => router.navigate("/lists/join")}
+          />
         </View>
       </View>
     </SafeAreaView>

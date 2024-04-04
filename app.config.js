@@ -30,7 +30,17 @@ export default (configuration) => ({
   web: {
     favicon: "./assets/favicon.png",
   },
-  plugins: ["expo-router"],
+  plugins: [
+    "expo-router",
+    [
+      "expo-camera",
+      {
+        cameraPermission:
+          "We need camera access to scan for QR codes to join a group shopping list",
+        recordAudioAndroid: false,
+      },
+    ],
+  ],
   // The linking scheme
   scheme: APP_NAME,
   experiments: {
