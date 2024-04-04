@@ -1,10 +1,16 @@
 import { router } from "expo-router";
-import { Pressable, SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { SafeAreaView, StyleSheet, Text, View } from "react-native";
 import Button from "../components/Button";
 import { Add, QrCodeScanner } from "../icons";
+import { useIsOnboarded } from "../onboarding";
 import theme from "../theme";
 
 export default function () {
+  const { mutation } = useIsOnboarded();
+  function handleCreate() {
+    mutation.mutate(true);
+    router.replace("/lists/new");
+  }
   return (
     <SafeAreaView style={styles.page}>
       <View style={styles.content}>
@@ -19,7 +25,7 @@ export default function () {
             style="filled"
             label="Create"
             icon={Add}
-            onPress={() => router.navigate("/lists/new")}
+            onPress={handleCreate}
           />
           <Button style="outlined" label="Join" icon={QrCodeScanner} />
         </View>
